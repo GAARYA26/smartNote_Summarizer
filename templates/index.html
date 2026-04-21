@@ -1,3 +1,92 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Notes Summarizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+    <h1>✨ Smart Notes Summarizer</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        
+        <textarea name="text" placeholder="Paste notes OR upload file">{{ original }}</textarea>
+        <br>
+
+        <label>Upload File:</label><br>
+        <input type="file" name="file" accept=".pdf,.txt">
+        <br><br>
+
+        <input type="text" name="query" placeholder="Search topic (optional)">
+        <br><br>
+
+        <label>Summary Length:</label><br>
+        <select name="length">
+            <option value="2">Short</option>
+            <option value="3" selected>Medium</option>
+            <option value="5">Long</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Summarize</button>
+    </form>    
+
+    <!-- 📊 Sentence Relevance -->
+        {% if ranked %}
+    <div class="card">
+        <h2>📊 Sentence Scores</h2>
+
+        {% for sentence, score in ranked %}
+            <p><b>Score:</b> <p><b>Score:</b> {{ "%.4f"|format(score) }}</p></p>
+            <p>{{ sentence }}</p>
+            <hr>
+        {% endfor %}
+
+    </div>
+    {% endif %}
+
+    <!-- ✨ Summary -->
+    {% if summary %}
+    <div class="card highlight">
+        <h2>✨ Final Summary</h2>
+        <p>
+            {% for s in summary %}
+                {{ s }}
+            {% endfor %}
+        </p>
+
+        <a href="/download?text={{ summary|join(' ') }}">
+            <button>⬇ Download Summary</button>
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- 📄 Highlighted Text -->
+    {% if highlighted_text %}
+    <div class="card">
+        <h2>📄 Highlighted Text (TF-IDF Keywords)</h2>
+        <p>{{ highlighted_text | safe }}</p>
+    </div>
+    {% endif %}
+
+    <!-- 🔑 Keywords -->
+    {% if keywords|length > 0 %}
+    <div class="card">
+        <h2>🔑 Keywords</h2>
+        <p>
+            {% for k in keywords %}
+                🔹 {{ k }}
+            {% endfor %}
+        </p>
+    </div>
+    {% endif %}
+
+</div>
+
+</body>
 <!DOCTYPE html>
 <html>
 <head>
